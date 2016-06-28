@@ -1,4 +1,41 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+//TODO:
+//Free the malloc
+
+struct platform {
+	struct platform *left;
+	struct platform *right;
+	int data;
+};
+
+typedef struct platform platform;
+
+
+struct platform * new_list(int data){
+	struct platform *new = (struct platform*) malloc(sizeof(struct platform));
+	new->data  = data;
+	new->right = new;
+	new->left  = new;
+	return new;
+}
+
+struct platform * insert_right(struct platform *list, int data){
+	struct platform *new = (struct platform *) malloc(sizeof(struct platform));
+	new->data        = data;
+	new->left        = list;
+	new->right       = list->right;
+	list->right      = new;
+	new->right->left = new;
+	return new;
+}
+
+struct platform * delete(struct platform *list){
+	list->right->left = list->left;
+	list->left->right = list->right;
+	return list->left;
+}
 
 int main(int argc, char *argv[]) {
 	FILE *file_pointer;
@@ -13,6 +50,10 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	struct platform peter;
+	peter.data = 1;
+	printf ("Peters Knoten hat den Wert: %d\n", peter.data);
+
 	int anzahl_plattformen = 0;
 	char read_char = getc(file_pointer);
 	char read_char_next;
@@ -26,6 +67,8 @@ int main(int argc, char *argv[]) {
 		anzahl_plattformen = anzahl_plattformen * 10 + (int)read_char - 48;
 		read_char = getc(file_pointer);
 	} while(read_char != '\n');
+
+    struct platform * adjlist[anzahl_plattformen+1];
 
 	int p2 = 0;
 	int p1 = 0;
@@ -66,4 +109,5 @@ int main(int argc, char *argv[]) {
 	printf("anzahl plattformen %d\n", anzahl_plattformen);
 	printf("p1 %d\n", p1);
 	printf("p2 %d\n", p2);
+	return 0;
 }
